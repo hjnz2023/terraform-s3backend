@@ -15,11 +15,13 @@ resource "aws_resourcegroups_group" "default" {
 
   resource_query {
     query = jsonencode({
-      ResourceTypeFilters = ["AWS::AllSupportedTypes"]
-      TagFilters = {
-        Key    = "ResourceGroup",
-        Values = ["${local.namespace}"]
-      }
+      ResourceTypeFilters = ["AWS::AllSupported"]
+      TagFilters = [
+        {
+          Key    = "ResourceGroup",
+          Values = ["${local.namespace}"]
+        }
+      ]
     })
   }
 }
