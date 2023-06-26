@@ -4,7 +4,7 @@ locals {
   principal_arns = var.principal_arns != null ? var.principal_arns : [data.aws_caller_identity.current.arn]
 }
 
-data "aws_iam_policy_document" "pricipal_assume_role" {
+data "aws_iam_policy_document" "terraform_state_access_pricipal_assume_role" {
   statement {
     actions = ["sts:AssumeRole"]
 
@@ -15,16 +15,16 @@ data "aws_iam_policy_document" "pricipal_assume_role" {
   }
 }
 
-resource "aws_iam_role" "default" {
-  name               = "${local.namespace}-tf-assume"
-  assume_role_policy = data.aws_iam_policy_document.pricipal_assume_role.json
+resource "aws_iam_role" "terraform_state_access" {
+  name               = "${local.namespace}-for-terraform-state-access"
+  assume_role_policy = data.aws_iam_policy_document.terraform_state_access_pricipal_assume_role.json
 
   tags = {
     ResourceGroup = local.namespace
   }
 }
 
-data "aws_iam_policy_document" "default" {
+data "aws_iam_policy_document" "terraform_state_access_full_access" {
   statement {
     actions = [
       "s3:ListBucket",
@@ -55,17 +55,17 @@ data "aws_iam_policy_document" "default" {
     ]
 
     resources = [
-      aws_dynamodb_table.state_lock.arn
+      aws_dynamodb_table.terrafrom_state_lock.arn
     ]
   }
 }
 
-resource "aws_iam_policy" "default" {
-  name   = "${local.namespace}-access-tf-state"
-  policy = data.aws_iam_policy_document.default.json
+resource "aws_iam_policy" "terraform_state_full_access" {
+  name   = "${local.namespace}-terraform-state-full-access-role-policy"
+  policy = data.aws_iam_policy_document.terraform_state_access_full_access.json
 }
 
-resource "aws_iam_role_policy_attachment" "default" {
-  role       = aws_iam_role.default.name
-  policy_arn = aws_iam_policy.default.arn
+resource "aws_iam_role_policy_attachment" "terraform_state_access_role_full_access" {
+  role       = aws_iam_role.terraform_state_access.name
+  policy_arn = aws_iam_policy.terraform_state_full_access.arn
 }

@@ -11,7 +11,7 @@ locals {
 }
 
 resource "aws_resourcegroups_group" "default" {
-  name = "${local.namespace}-group"
+  name = "${local.namespace}-terraform-state-group"
 
   resource_query {
     query = jsonencode({
@@ -33,7 +33,7 @@ resource "aws_kms_key" "default" {
 }
 
 resource "aws_s3_bucket" "state" {
-  bucket        = "${local.namespace}-state"
+  bucket        = "${local.namespace}-terrafrom-state"
   force_destroy = var.force_destroy_state
 
   tags = {
@@ -69,8 +69,8 @@ resource "aws_s3_bucket_public_access_block" "default" {
   restrict_public_buckets = true
 }
 
-resource "aws_dynamodb_table" "state_lock" {
-  name         = "${local.namespace}-state-lock"
+resource "aws_dynamodb_table" "terrafrom_state_lock" {
+  name         = "${local.namespace}-terraform-state-lock"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
 
