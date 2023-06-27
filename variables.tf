@@ -4,6 +4,10 @@ variable "namespace" {
   type        = string
 }
 
+variable "namespace_random_length" {
+  type = number
+}
+
 variable "principal_arns" {
   description = "A list of pricipal arns allowed to assume the IAM role"
   default     = null

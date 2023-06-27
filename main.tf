@@ -1,13 +1,13 @@
 data "aws_region" "current" {}
 
 resource "random_string" "rand" {
-  length  = 24
+  length  = var.namespace_random_length
   special = false
   upper   = false
 }
 
 locals {
-  namespace = substr(join("-", [var.namespace, random_string.rand.result]), 0, 24)
+  namespace = substr(join("-", [var.namespace, random_string.rand.result]), 0, var.namespace_random_length)
 }
 
 resource "aws_resourcegroups_group" "default" {
